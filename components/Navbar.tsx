@@ -1,8 +1,15 @@
 
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import NavItems from "./NavItems";
+import {
+  Show,
+  SignInButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 const Navbar = () => {
   return (
@@ -30,6 +37,16 @@ const Navbar = () => {
         >
           <NavItems />
         </Suspense>
+
+        <Show when="signed-out">
+          <div className="flex items-center gap-2 cursor-pointer n">
+            <SignInButton />
+          </div>
+        </Show>
+
+        <Show when="signed-in">
+          <UserButton />
+        </Show>
       </div>
     </nav>
   );
