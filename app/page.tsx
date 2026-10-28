@@ -1,9 +1,10 @@
+
 import CompanionCard from "@/components/CompanionCard"
 import CompanionsList from "@/components/CompanionsList"
 import CTA from "@/components/CTA"
 import { recentSessions } from "@/constants"
 
-const Page = () => {
+const Page = async () => {
   return (
     <main className="">
       <h1 className="text-2xl underline">Popular Companions</h1>

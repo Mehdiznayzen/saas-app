@@ -1,4 +1,3 @@
-
 "use client";
 
 import { z } from "zod";
@@ -15,6 +14,10 @@ import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { subjects } from "@/constants";
 import { Textarea } from "./ui/textarea";
+import { createCompanion } from "@/lib/actions/companion.actions";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ArrowRight, LoaderCircle, Sparkles } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Companion is required" }),
@@ -41,8 +44,26 @@ const CompanionForm = () => {
     },
   });
 
-  const onSubmit = (data: CompanionFormOutput) => {
-    console.log(data);
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (data: CompanionFormOutput) => {
+    setIsSubmitting(true)
+
+    try {
+      const companion = await createCompanion(data);
+
+      if(!companion?.id){
+        throw new Error("Impossible de créer le compagnon.");
+      }
+
+      router.push(`/companions/${companion.id}`)
+    } catch (error) {
+      console.error("Erreur lors de la création :", error);
+
+    }finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -262,11 +283,41 @@ const CompanionForm = () => {
         />
       </FieldGroup>
 
-      <Button 
-        className={"w-full cursor-pointer p-5"} 
+      
+      <Button
         type="submit"
+        disabled={isSubmitting}
+        className="
+          group relative w-full overflow-hidden
+          rounded-xl border-0 p-6
+          bg-[#fe5933] text-white
+          font-semibold text-base
+          shadow-md shadow-orange-500/20
+          transition-all duration-300
+          hover:bg-[#e94a27] hover:shadow-lg
+          hover:shadow-orange-500/30
+          active:scale-[0.98]
+          disabled:cursor-not-allowed
+          disabled:opacity-80
+          cursor-pointer
+        "
       >
-        Build Your Companion
+        <span className="relative z-10 flex items-center justify-center gap-2.5">
+          {
+            isSubmitting ? (
+              <>
+                <LoaderCircle className="h-5 w-5 animate-spin" />
+                <span>Creating your companion...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-5 w-5 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
+                <span>Build Your Companion</span>
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </>
+            )
+          }
+        </span>
       </Button>
     </form>
   );

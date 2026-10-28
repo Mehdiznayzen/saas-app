@@ -38,9 +38,15 @@ const Navbar = () => {
           <NavItems />
         </Suspense>
 
-        <Show when="signed-out">
-          <div className="flex items-center gap-2 cursor-pointer n">
-            <SignInButton />
+        <Show 
+          when="signed-out"
+        >
+          <div 
+            className="flex items-center gap-2 cursor-pointer n"
+          >
+            <SignInButton>
+              <button className="btn-signin">Sign In</button>
+            </SignInButton>
           </div>
         </Show>
 
